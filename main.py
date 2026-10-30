@@ -6,7 +6,7 @@ from rlm import RLM
 
 def haystack(n_lines=20_000, seed=0):
     rng = random.Random(seed)
-    words = "alpha beta gamma delta river stone cloud paper lamp orbit quiet green".split()
+    words = ["alpha", "beta", "gamma", "delta", "river", "stone", "cloud", "paper", "lamp", "orbit", "quiet", "green"]
     lines = [" ".join(rng.choices(words, k=8)) for _ in range(n_lines)]
     magic = str(rng.randint(1_000_000, 9_999_999))
     lines.insert(rng.randrange(n_lines), f"The magic number is {magic}.")
