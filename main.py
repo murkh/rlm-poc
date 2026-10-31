@@ -1,4 +1,5 @@
 import argparse
+import logging
 import random
 
 from rlm import RLM
@@ -15,12 +16,18 @@ def haystack(n_lines=20_000, seed=0):
 
 def main():
     p = argparse.ArgumentParser(description="Recursive Language Model POC")
-    p.add_argument("--model", default="gpt-5")
-    p.add_argument("--sub-model", default="gpt-5-mini")
+    p.add_argument("--model", default="zai.glm-5")
+    p.add_argument("--sub-model", default="nvidia.nemotron-nano-3-30b")
     p.add_argument("--max-depth", type=int, default=1)
     p.add_argument("--context-file", help="run on your own context instead of the needle demo")
     p.add_argument("--query")
+    p.add_argument("--log-level", default="INFO", choices=["DEBUG", "INFO", "WARNING"],
+                   help="DEBUG also shows full LM replies, executed code and REPL output")
     args = p.parse_args()
+
+    # Root at WARNING keeps httpx/openai quiet; only the rlm logger follows --log-level.
+    logging.basicConfig(level=logging.WARNING, format="%(asctime)s %(levelname)-7s %(threadName)-12s %(message)s")
+    logging.getLogger("rlm").setLevel(args.log_level)
 
     rlm = RLM(args.model, args.sub_model, max_depth=args.max_depth)
     if args.context_file:
